@@ -1,0 +1,107 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Martin-lglt <195508471+martin-lglt@users.noreply.github.com>",
+    "classifications": [
+        "ArangoDB"
+    ],
+    "name": "Core.Arango Migration",
+    "generatorVersions": "[1.0.0.0-*)",
+    "identity": "core.arango.migration",
+    "groupIdentity": "core.arango",
+    "shortName": "core.arango-migration",
+    "description": "Creates a new Core.Arango migration",
+    "tags": {
+        "language": "C#",
+        "type": "item"
+    },
+    "sourceName": "Migration1",
+    "preferDefaultName": true,
+    "defaultName": "Migration1",
+    "primaryOutputs": [
+        {
+            "path": "NameWithCreatedDate.cs"
+        }
+    ],
+    "symbols": {
+        "createdDate": {
+            "type": "generated",
+            "generator": "now",
+            "parameters": {
+                "format": "yyyyddMMHHmmss"
+            },
+            "replaces": "19990101000000"
+        },
+        "nameWithCreatedDate": {
+            "type": "generated",
+            "generator": "join",
+            "fileRename": "NameWithCreatedDate",
+            "parameters": {
+                "symbols": [
+                    {
+                        "type": "ref",
+                        "value": "createdDate"
+                    },
+                    {
+                        "type": "ref",
+                        "value": "name"
+                    }
+                ],
+                "separator": "_"
+            }
+        },
+        "DefaultNamespace": {
+            "type": "bind",
+            "binding": "msbuild:RootNamespace",
+            "replaces": "Company.ClassLibrary1"
+        },
+        "ImplicitUsings": {
+            "type": "bind",
+            "binding": "msbuild:ImplicitUsings",
+            "datatype": "string",
+            "defaultValue": "disable"
+        },
+        "evaluatedLangVersion": {
+            "type": "bind",
+            "binding": "msbuild:LangVersion",
+            "dataType": "string"
+        },
+        "latestLangVersion": {
+            "type": "generated",
+            "generator": "constant",
+            "parameters": {
+                "value": "latest"
+            }
+        },
+        "langVersion": {
+            "type": "generated",
+            "generator": "coalesce",
+            "parameters": {
+                "sourceVariableName": "evaluatedLangVersion",
+                "fallbackVariableName": "latestLangVersion"
+            }
+        },
+        "csharp9orOlder": {
+            "type": "generated",
+            "generator": "regexMatch",
+            "datatype": "bool",
+            "parameters": {
+                "pattern": "^(ISO-1|ISO-2|[1-7]|[8-9]|[8-9]\\.0|7\\.[0-3])$",
+                "source": "langVersion"
+            }
+        },
+        "csharp10orLater": {
+            "type": "computed",
+            "value": "!csharp9orOlder"
+        },
+        "csharpFeature_FileScopedNamespaces": {
+            "type": "computed",
+            "value": "csharp10orLater == \"true\""
+        }
+    },
+    "constraints": {
+        "csharp-only": {
+            "type": "project-capability",
+            "args": "CSharp"
+        }
+    }
+}
